@@ -4,8 +4,6 @@ import { items } from "@/db/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { revalidatePath } from "next/cache";
-import { SignIn } from "./components/sign-in";
-import { SignOut } from "./components/sign-out";
 import { auth } from "@/auth";
 export default async function Home() {
  
@@ -14,26 +12,14 @@ export default async function Home() {
   if(!session || !session.user) return null;
   
   return (
-    <main className="container mx-auto py-12">
-      <h2>{session?.user?.name || "Not Logged In"}</h2>
-      <form
-        action={async (formData: FormData) => {
-          "use server";
-          //const bid = formData.get('bid') as string
-          await database.insert(items).values({
-            name: formData.get("name") as string,
-            userId: session?.user?.id!
-          });
-          revalidatePath("/");
-        }}
-      >
-        <Input name="name" placeholder="Name your item" />
-        <Button type="submit">Post Item</Button>
-      </form>
-      {allItems.map((item) => (
-        <div key={item.id}>{item.name}</div>
-      ))}
-      {!session ? <SignIn /> : <SignOut />}
+    <main className="container mx-auto py-12 space-y-8">
+      
+      <h2 className="text-2xl font-bold">Items For Sale</h2>
+      <div className="grid grid-cols-4 gap-6">
+        {allItems.map((item) => (
+          <div className="border p-6 rounded-xl" key={item.id}>{item.name} {"\n"} starting price: ${item.startingPrice}</div>
+        ))}
+      </div>
     </main>
   );
 }
